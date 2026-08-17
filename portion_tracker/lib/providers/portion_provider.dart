@@ -113,6 +113,17 @@ class PortionProvider extends ChangeNotifier {
     await prefs.setString(_consumedKey, jsonEncode(_consumed));
   }
 
+  Future<void> unlogPortion(String id) async {
+    final current = consumedFor(id);
+    if (current <= 0) return;
+
+    _consumed[id] = current - 1;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_consumedKey, jsonEncode(_consumed));
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
