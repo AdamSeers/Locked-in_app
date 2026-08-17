@@ -64,7 +64,7 @@ class FoodTypeCard extends StatelessWidget {
                 Text(
                   isDone
                       ? 'Done for today'
-                      : '$remaining left of ${foodType.dailyGoal}',
+                      : '$remaining left of ${provider.dailyGoalFor(foodType.id)}',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isDone

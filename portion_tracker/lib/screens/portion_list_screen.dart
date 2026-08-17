@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../data/food_types_data.dart';
+import '../models/food_type.dart';
 import '../providers/portion_provider.dart';
 import '../widgets/portion_tile.dart';
 
@@ -10,6 +12,7 @@ class PortionListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<PortionProvider>();
+    final seen = <String, int>{};
 
     return Scaffold(
       appBar: AppBar(title: const Text('Full List')),
@@ -22,16 +25,10 @@ class PortionListScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Progress today',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('Progress today', style: Theme.of(context).textTheme.titleMedium),
                 Text(
                   '${provider.totalConsumed} / ${provider.totalGoal}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -41,9 +38,7 @@ class PortionListScreen extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
-                value: provider.totalGoal == 0
-                    ? 0
-                    : provider.totalConsumed / provider.totalGoal,
+                value: provider.totalGoal == 0 ? 0 : provider.totalConsumed / provider.totalGoal,
                 minHeight: 8,
               ),
             ),
@@ -51,49 +46,34 @@ class PortionListScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.only(top: 8, bottom: 24),
               children: [
-                for (final foodType in provider.foodTypes) ...[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
-                    child: Row(
-                      children: [
-                        Text(
-                          foodType.emoji,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          foodType.name,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  for (int i = 0; i < foodType.portions.length; i++)
-                    PortionTile(
-                      foodType: foodType,
-                      label: foodType.portions[i],
-                      isDone: i < provider.consumedFor(foodType.id),
-                      onTap: () {
-                        final isDone =
-                            i < provider.consumedFor(foodType.id);
-                        if (isDone) {
-                          provider.unlogPortion(foodType.id);
-                        } else {
-                          provider.logPortion(foodType.id);
-                        }
-                      },
-                    ),
-                ],
+                for (final entry in defaultPortionOrder) _buildTile(provider, entry, seen),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTile(PortionProvider provider, PortionEntry entry, Map<String, int> seen) {
+    final foodType = provider.foodTypes.firstWhere((f) => f.id == entry.foodTypeId);
+    final index = seen[entry.foodTypeId] ?? 0;
+    seen[entry.foodTypeId] = index + 1;
+    final isDone = index < provider.consumedFor(entry.foodTypeId);
+
+    return PortionTile(
+      foodType: foodType,
+      label: entry.label,
+      isDone: isDone,
+      onTap: () {
+        if (isDone) {
+          provider.unlogPortion(entry.foodTypeId);
+        } else {
+          provider.logPortion(entry.foodTypeId);
+        }
+      },
     );
   }
 }

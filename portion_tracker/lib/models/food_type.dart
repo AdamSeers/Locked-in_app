@@ -13,7 +13,6 @@ class FoodExample {
 class FoodType {
   final String id;
   final String name;
-  final List<String> portions;
   final String emoji;
   final Color color;
   final String infoTitle;
@@ -23,14 +22,22 @@ class FoodType {
   const FoodType({
     required this.id,
     required this.name,
-    required this.portions,
     required this.emoji,
     required this.color,
     required this.infoTitle,
     required this.infoText,
     required this.examples,
   });
+}
 
-  /// Number of portions per day, derived from the hardcoded [portions] list.
-  int get dailyGoal => portions.length;
+/// One row on the Full List page: a specific portion of a specific food
+/// type. Where this appears in `defaultPortionOrder` (in
+/// food_types_data.dart) is exactly where it shows up in the list — food
+/// types don't have to stay grouped together, and each food type's daily
+/// goal is simply how many times it appears in that list.
+class PortionEntry {
+  final String foodTypeId;
+  final String label;
+
+  const PortionEntry(this.foodTypeId, this.label);
 }

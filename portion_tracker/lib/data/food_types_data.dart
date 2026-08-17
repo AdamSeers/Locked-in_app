@@ -11,7 +11,6 @@ final List<FoodType> defaultFoodTypes = [
   const FoodType(
     id: 'vegetables',
     name: 'Vegetables',
-    portions: ['Vegetables 1', 'Vegetables 2'],
     emoji: '🥦',
     color: Color(0xFF4CAF50),
     infoTitle: 'Vegetables',
@@ -33,7 +32,6 @@ final List<FoodType> defaultFoodTypes = [
   const FoodType(
     id: 'fruits',
     name: 'Fruits',
-    portions: ['Portion 1', 'Portion 2', 'Portion 3'],
     emoji: '🍎',
     color: Color(0xFFE53935),
     infoTitle: 'Fruits',
@@ -54,16 +52,6 @@ final List<FoodType> defaultFoodTypes = [
   const FoodType(
     id: 'grains',
     name: 'Grains',
-    portions: [
-      'Grains 1',
-      'Grains 2',
-      'Grains 3',
-      'Grains 4',
-      'Grains 5',
-      'Grains 6',
-      'Grains 7',
-      'Grains 8',
-    ],
     emoji: '🌾',
     color: Color(0xFFC98A2C),
     infoTitle: 'Grains',
@@ -83,7 +71,6 @@ final List<FoodType> defaultFoodTypes = [
   const FoodType(
     id: 'dairy',
     name: 'Dairy',
-    portions: ['Portion 1', 'Portion 2'],
     emoji: '🥛',
     color: Color(0xFF42A5F5),
     infoTitle: 'Dairy',
@@ -102,14 +89,6 @@ final List<FoodType> defaultFoodTypes = [
   const FoodType(
     id: 'protein',
     name: 'Protein',
-    portions: [
-      'Protein 1',
-      'Protein 2',
-      'Protein 3',
-      'Protein 4',
-      'Protein 5',
-      'Protein 6',
-    ],
     emoji: '🍗',
     color: Color(0xFF8D6E63),
     infoTitle: 'Protein',
@@ -128,15 +107,6 @@ final List<FoodType> defaultFoodTypes = [
   const FoodType(
     id: 'fats',
     name: 'Fats & Oils',
-    portions: [
-      'Fats & Oils 1',
-      'Fats & Oils 2',
-      'Fats & Oils 3',
-      'Fats & Oils 4',
-      'Fats & Oils 5',
-      'Fats & Oils 6',
-      'Fats & Oils 7',
-    ],
     emoji: '🥑',
     color: Color(0xFF9CCC65),
     infoTitle: 'Fats & Oils',
@@ -153,7 +123,6 @@ final List<FoodType> defaultFoodTypes = [
   const FoodType(
     id: 'added_sugars',
     name: 'Added Sugars',
-    portions: ['Added Sugars 1', 'Added Sugars 2'],
     emoji: '🍬',
     color: Color(0xFFEC407A),
     infoTitle: 'Added Sugars',
@@ -168,4 +137,43 @@ final List<FoodType> defaultFoodTypes = [
       FoodExample('Regular soda (12 oz can)', '~8-10 tsp total'),
     ],
   ),
+];
+
+/// The full, freely-reorderable list of portions shown on the Full List
+/// page. Each entry references a food type (by id, matching
+/// [defaultFoodTypes]) plus its own label. Reorder, interleave, add, or
+/// remove entries here — the display order follows this list exactly,
+/// entries don't need to stay grouped by food type, and each food type's
+/// daily goal is simply how many times it appears here.
+final List<PortionEntry> defaultPortionOrder = [
+  const PortionEntry('vegetables', 'Vegetables 1'),
+  const PortionEntry('vegetables', 'Vegetables 2'),
+  const PortionEntry('fruits', 'Fruits 1'),
+  const PortionEntry('fruits', 'Fruits 2'),
+  const PortionEntry('fruits', 'Fruits 3'),
+  const PortionEntry('grains', 'Grains 1'),
+  const PortionEntry('grains', 'Grains 2'),
+  const PortionEntry('grains', 'Grains 3'),
+  const PortionEntry('grains', 'Grains 4'),
+  const PortionEntry('grains', 'Grains 5'),
+  const PortionEntry('grains', 'Grains 6'),
+  const PortionEntry('grains', 'Grains 7'),
+  const PortionEntry('grains', 'Grains 8'),
+  const PortionEntry('dairy', 'Dairy 1'),
+  const PortionEntry('dairy', 'Dairy 2'),
+  const PortionEntry('protein', 'Protein 1'),
+  const PortionEntry('protein', 'Protein 2'),
+  const PortionEntry('protein', 'Protein 3'),
+  const PortionEntry('protein', 'Protein 4'),
+  const PortionEntry('protein', 'Protein 5'),
+  const PortionEntry('protein', 'Protein 6'),
+  const PortionEntry('fats', 'Fats & Oils 1'),
+  const PortionEntry('fats', 'Fats & Oils 2'),
+  const PortionEntry('fats', 'Fats & Oils 3'),
+  const PortionEntry('fats', 'Fats & Oils 4'),
+  const PortionEntry('fats', 'Fats & Oils 5'),
+  const PortionEntry('fats', 'Fats & Oils 6'),
+  const PortionEntry('fats', 'Fats & Oils 7'),
+  const PortionEntry('added_sugars', 'Added Sugars 1'),
+  const PortionEntry('added_sugars', 'Added Sugars 2'),
 ];

@@ -15,6 +15,7 @@ class PortionProvider extends ChangeNotifier {
   static const _resetHour = 3;
 
   final List<FoodType> foodTypes = defaultFoodTypes;
+  final Map<String, int> _dailyGoals = _computeDailyGoals();
 
   Map<String, int> _consumed = {for (final f in defaultFoodTypes) f.id: 0};
   String _logicalDay = '';
@@ -93,18 +94,18 @@ class PortionProvider extends ChangeNotifier {
 
   int remainingFor(String id) {
     final foodType = foodTypes.firstWhere((f) => f.id == id);
-    final left = foodType.dailyGoal - consumedFor(id);
+    final left = dailyGoalFor(id) - consumedFor(id);
     return left < 0 ? 0 : left;
   }
 
-  int get totalGoal => foodTypes.fold(0, (sum, f) => sum + f.dailyGoal);
+  int get totalGoal => foodTypes.fold(0, (sum, f) => sum + dailyGoalFor(f.id));
 
   int get totalConsumed => _consumed.values.fold(0, (sum, v) => sum + v);
 
   Future<void> logPortion(String id) async {
     final foodType = foodTypes.firstWhere((f) => f.id == id);
     final current = consumedFor(id);
-    if (current >= foodType.dailyGoal) return;
+    //if (current >= foodType.dailyGoal) return;
 
     _consumed[id] = current + 1;
     notifyListeners();
@@ -123,6 +124,16 @@ class PortionProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_consumedKey, jsonEncode(_consumed));
   }
+
+  static Map<String, int> _computeDailyGoals() {
+    final goals = <String, int>{};
+    for (final entry in defaultPortionOrder) {
+      goals[entry.foodTypeId] = (goals[entry.foodTypeId] ?? 0) + 1;
+    }
+    return goals;
+  }
+
+  int dailyGoalFor(String id) => _dailyGoals[id] ?? 0;
 
   @override
   void dispose() {
