@@ -26,8 +26,8 @@ class PortionTile extends StatelessWidget {
         color: isDone ? foodType.color : Colors.grey.shade400,
       ),
       title: Text(
-        '${foodType.name} — $label',
-        style: TextStyle(
+        '$label',//${foodType.name} —
+      style: TextStyle(
           color: isDone ? Colors.grey.shade500 : null,
           decoration: isDone ? TextDecoration.lineThrough : null,
         ),

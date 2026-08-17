@@ -146,34 +146,43 @@ final List<FoodType> defaultFoodTypes = [
 /// entries don't need to stay grouped by food type, and each food type's
 /// daily goal is simply how many times it appears here.
 final List<PortionEntry> defaultPortionOrder = [
-  const PortionEntry('vegetables', 'Vegetables 1'),
-  const PortionEntry('vegetables', 'Vegetables 2'),
-  const PortionEntry('fruits', 'Fruits 1'),
-  const PortionEntry('fruits', 'Fruits 2'),
-  const PortionEntry('fruits', 'Fruits 3'),
-  const PortionEntry('grains', 'Grains 1'),
-  const PortionEntry('grains', 'Grains 2'),
-  const PortionEntry('grains', 'Grains 3'),
-  const PortionEntry('grains', 'Grains 4'),
-  const PortionEntry('grains', 'Grains 5'),
-  const PortionEntry('grains', 'Grains 6'),
-  const PortionEntry('grains', 'Grains 7'),
-  const PortionEntry('grains', 'Grains 8'),
-  const PortionEntry('dairy', 'Dairy 1'),
-  const PortionEntry('dairy', 'Dairy 2'),
-  const PortionEntry('protein', 'Protein 1'),
-  const PortionEntry('protein', 'Protein 2'),
-  const PortionEntry('protein', 'Protein 3'),
-  const PortionEntry('protein', 'Protein 4'),
-  const PortionEntry('protein', 'Protein 5'),
-  const PortionEntry('protein', 'Protein 6'),
-  const PortionEntry('fats', 'Fats & Oils 1'),
-  const PortionEntry('fats', 'Fats & Oils 2'),
-  const PortionEntry('fats', 'Fats & Oils 3'),
-  const PortionEntry('fats', 'Fats & Oils 4'),
-  const PortionEntry('fats', 'Fats & Oils 5'),
-  const PortionEntry('fats', 'Fats & Oils 6'),
-  const PortionEntry('fats', 'Fats & Oils 7'),
-  const PortionEntry('added_sugars', 'Added Sugars 1'),
-  const PortionEntry('added_sugars', 'Added Sugars 2'),
+  //Breakfast
+  const PortionEntry('grains', 'Breakfast Grains'),
+  const PortionEntry('grains', 'Breakfast Grains'),
+  const PortionEntry('fruits', 'Breakfast Fruit'),
+  const PortionEntry('protein', 'Breakfast Protein'),
+
+  //Dinner
+  const PortionEntry('grains', 'Dinner Grains'),
+  const PortionEntry('grains', 'Dinner Grains'),
+  const PortionEntry('protein', 'Dinner Protein'),
+  const PortionEntry('protein', 'Dinner Protein'),
+  const PortionEntry('fats', 'Dinner Fats & Oils'),
+  const PortionEntry('fats', 'Dinner Fats & Oils'),
+  const PortionEntry('fats', 'Dinner Fats & Oils'),
+
+  //Collation PM
+  const PortionEntry('grains', 'PM Snack Grains'),
+  const PortionEntry('grains', 'PM Snack Grains'),
+  const PortionEntry('fruits', 'PM Snack Fruit'),
+  const PortionEntry('fruits', 'PM Snack Fruit'),
+  const PortionEntry('dairy', 'PM Snack Dairy'),
+
+  //Supper
+  const PortionEntry('grains', 'Supper Grains'),
+  const PortionEntry('grains', 'Supper Grains'),
+  const PortionEntry('vegetables', 'Supper Vegetables'),
+  const PortionEntry('vegetables', 'Supper Vegetables'),
+  const PortionEntry('protein', 'Supper Protein'),
+  const PortionEntry('protein', 'Supper Protein'),
+  const PortionEntry('protein', 'Supper Protein'),
+  const PortionEntry('fats', 'Supper Fats & Oils'),
+  const PortionEntry('fats', 'Supper Fats & Oils'),
+  const PortionEntry('fats', 'Supper Fats & Oils'),
+
+  //Night snack
+  const PortionEntry('dairy', 'Night Snack Dairy'),
+  const PortionEntry('fats', 'Night Snack Fats & Oils'),
+  const PortionEntry('added_sugars', 'Night Snack Added Sugars'),
+  const PortionEntry('added_sugars', 'Night Snack Added Sugars'),
 ];
