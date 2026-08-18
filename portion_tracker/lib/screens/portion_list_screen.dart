@@ -5,7 +5,11 @@ import '../data/food_types_data.dart';
 import '../models/food_type.dart';
 import '../providers/portion_provider.dart';
 import '../widgets/portion_tile.dart';
+import '../widgets/reset_button.dart';
 
+/// Shows every portion for the day in exactly the order they're listed
+/// in [defaultPortionOrder] — food types are not grouped together, and
+/// [PortionTitle] rows can be dropped in anywhere as section headers.
 class PortionListScreen extends StatelessWidget {
   const PortionListScreen({super.key});
 
@@ -15,7 +19,10 @@ class PortionListScreen extends StatelessWidget {
     final seen = <String, int>{};
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Full List')),
+      appBar: AppBar(
+        title: const Text('Full List'),
+        actions: [const ResetButton()],
+      ),
       body: !provider.isReady
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -25,10 +32,16 @@ class PortionListScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Progress today', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Progress today',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 Text(
                   '${provider.totalConsumed} / ${provider.totalGoal}',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -38,7 +51,9 @@ class PortionListScreen extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
-                value: provider.totalGoal == 0 ? 0 : provider.totalConsumed / provider.totalGoal,
+                value: provider.totalGoal == 0
+                    ? 0
+                    : provider.totalConsumed / provider.totalGoal,
                 minHeight: 8,
               ),
             ),
@@ -48,7 +63,8 @@ class PortionListScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.only(top: 8, bottom: 24),
               children: [
-                for (final entry in defaultPortionOrder) _buildTile(provider, entry, seen),
+                for (final item in defaultPortionOrder)
+                  _buildItem(context, provider, item, seen),
               ],
             ),
           ),
@@ -57,8 +73,28 @@ class PortionListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTile(PortionProvider provider, PortionEntry entry, Map<String, int> seen) {
-    final foodType = provider.foodTypes.firstWhere((f) => f.id == entry.foodTypeId);
+  Widget _buildItem(
+      BuildContext context,
+      PortionProvider provider,
+      PortionListItem item,
+      Map<String, int> seen,
+      ) {
+    if (item is PortionTitle) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+        child: Text(
+          item.text,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
+
+    final entry = item as PortionEntry;
+    final foodType = provider.foodTypes.firstWhere(
+          (f) => f.id == entry.foodTypeId,
+    );
     final index = seen[entry.foodTypeId] ?? 0;
     seen[entry.foodTypeId] = index + 1;
     final isDone = index < provider.consumedFor(entry.foodTypeId);

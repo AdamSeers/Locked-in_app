@@ -35,9 +35,18 @@ class FoodType {
 /// food_types_data.dart) is exactly where it shows up in the list — food
 /// types don't have to stay grouped together, and each food type's daily
 /// goal is simply how many times it appears in that list.
-class PortionEntry {
+abstract class PortionListItem {
+  const PortionListItem();
+}
+
+class PortionEntry extends PortionListItem {
   final String foodTypeId;
   final String label;
 
   const PortionEntry(this.foodTypeId, this.label);
+}
+
+class PortionTitle extends PortionListItem {
+  final String text;
+  const PortionTitle(this.text);
 }

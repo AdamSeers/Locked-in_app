@@ -90,6 +90,14 @@ class PortionProvider extends ChangeNotifier {
     await prefs.setString(_consumedKey, jsonEncode(_consumed));
   }
 
+  /// Manually clears all of today's logged portions. Used by the reset
+  /// button as a fallback when the automatic 3 AM reset didn't fire.
+  Future<void> resetToday() async {
+    final prefs = await SharedPreferences.getInstance();
+    await _persistReset(prefs, _logicalDay);
+    notifyListeners();
+  }
+
   int consumedFor(String id) => _consumed[id] ?? 0;
 
   int remainingFor(String id) {
@@ -127,8 +135,10 @@ class PortionProvider extends ChangeNotifier {
 
   static Map<String, int> _computeDailyGoals() {
     final goals = <String, int>{};
-    for (final entry in defaultPortionOrder) {
-      goals[entry.foodTypeId] = (goals[entry.foodTypeId] ?? 0) + 1;
+    for (final item in defaultPortionOrder) {
+      if (item is PortionEntry) {
+        goals[item.foodTypeId] = (goals[item.foodTypeId] ?? 0) + 1;
+      }
     }
     return goals;
   }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/portion_provider.dart';
 import '../widgets/food_type_card.dart';
+import '../widgets/reset_button.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,7 +13,10 @@ class HomeScreen extends StatelessWidget {
     final provider = context.watch<PortionProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Today's Portions")),
+      appBar: AppBar(
+        title: const Text('Today\'s portions'),
+        actions: [const ResetButton()],
+      ),
       body: !provider.isReady
           ? const Center(child: CircularProgressIndicator())
           : Padding(
