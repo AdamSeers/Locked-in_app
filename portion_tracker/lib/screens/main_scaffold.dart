@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'home_screen.dart';
 import 'portion_list_screen.dart';
+import 'routine_screen.dart';
 
 /// Bottom navigation between the app's pages. Add a new page by adding
 /// another entry to `_pages` and `NavigationDestination`.
@@ -18,6 +19,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   static const List<Widget> _pages = [
     HomeScreen(),
     PortionListScreen(),
+    RoutineScreen(),
   ];
 
   @override
@@ -35,6 +37,10 @@ class _MainScaffoldState extends State<MainScaffold> {
           NavigationDestination(
             icon: Icon(Icons.checklist_rounded),
             label: 'Full List',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.access_time_filled),
+            label: 'Routine',
           ),
         ],
       ),

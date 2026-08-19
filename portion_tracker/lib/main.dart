@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/portion_provider.dart';
+import 'providers/routine_provider.dart';
 import 'screens/main_scaffold.dart';
 
 void main() {
@@ -17,33 +18,40 @@ class PortionTrackerApp extends StatefulWidget {
 
 class _PortionTrackerAppState extends State<PortionTrackerApp>
     with WidgetsBindingObserver {
-  late final PortionProvider _provider;
+  late final PortionProvider _portionProvider;
+  late final RoutineProvider _routineProvider;
 
   @override
   void initState() {
     super.initState();
-    _provider = PortionProvider();
+    _portionProvider = PortionProvider();
+    _routineProvider = RoutineProvider();
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _provider.checkReset();
+      _portionProvider.checkReset();
+      _routineProvider.checkReset();
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _provider.dispose();
+    _portionProvider.dispose();
+    _routineProvider.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<PortionProvider>.value(
-      value: _provider,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PortionProvider>.value(value: _portionProvider),
+        ChangeNotifierProvider<RoutineProvider>.value(value: _routineProvider),
+      ],
       child: MaterialApp(
         title: 'Portion Tracker',
         debugShowCheckedModeBanner: false,
