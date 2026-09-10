@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../models/food_type.dart';
 
-/// Default food categories and their hardcoded daily portions.
+/// Default food categories.
 ///
-/// Each food type's `portions` list is a literal, editable list of labels
-/// — add, remove, or rename entries to change what shows up on both
-/// pages. The number of portions per day is simply that list's length.
+/// How many portions of each type there are per day — and what order
+/// they show up in on the Full List page — is controlled entirely by
+/// [defaultPortionOrder] below, not by anything here.
+///
+/// `examples` powers the "Examples" list in the long-press info sheet.
+/// Amounts here match a nutritionist's specific portion plan (grams,
+/// cups, tablespoons/teaspoons as given), rather than generic USDA
+/// MyPlate figures.
 final List<FoodType> defaultFoodTypes = [
   const FoodType(
     id: 'vegetables',
@@ -14,15 +19,14 @@ final List<FoodType> defaultFoodTypes = [
     emoji: '🥦',
     color: Color(0xFF4CAF50),
     infoTitle: 'Vegetables',
-    infoText: 'A portion is about 1 cup of raw or cooked vegetables, or '
-        '2 cups of raw leafy greens.',
+    infoText: 'A portion is 1 cup of vegetables.',
     examples: [
       FoodExample('Raw baby carrots', '1 cup'),
       FoodExample('Cooked broccoli', '1 cup'),
       FoodExample('Bell pepper strips', '1 cup'),
       FoodExample('Cherry tomatoes', '1 cup'),
       FoodExample('Cooked green beans', '1 cup'),
-      FoodExample('Raw spinach or mixed greens', '2 cups'),
+      FoodExample('Raw spinach or mixed greens', '1 cup'),
       FoodExample('Cooked spinach', '1 cup'),
       FoodExample('Cooked mushrooms', '1 cup'),
       FoodExample('Cooked cauliflower', '1 cup'),
@@ -35,18 +39,18 @@ final List<FoodType> defaultFoodTypes = [
     emoji: '🍎',
     color: Color(0xFFE53935),
     infoTitle: 'Fruits',
-    infoText: 'A portion is about 1 cup of fruit, or 1/2 cup of dried '
-        'fruit (dried fruit is more concentrated, so it counts double).',
+    infoText: 'A portion is about 2/3 of a banana, 1 cup of berries, or '
+        '1 medium apple, pear, or orange — dried fruit and juice count '
+        'for much less per portion.',
     examples: [
-      FoodExample('Sliced strawberries', '1 cup'),
-      FoodExample('Grapes', '1 cup (about 32)'),
-      FoodExample('Large banana', '1'),
-      FoodExample('Melon or pineapple chunks', '1 cup'),
-      FoodExample('Mixed berries', '1 cup'),
-      FoodExample('Orange segments', '1 cup'),
-      FoodExample('Applesauce', '1 cup'),
-      FoodExample('100% fruit juice', '1 cup'),
-      FoodExample('Raisins or dried cranberries', '1/2 cup'),
+      FoodExample('Banana', '2/3'),
+      FoodExample('Berries', '1 cup'),
+      FoodExample('Apple, pear, or orange', '1'),
+      FoodExample('Clementines or kiwis', '2'),
+      FoodExample('Pineapple, melon, or grapes', '1/2 cup'),
+      FoodExample('Frozen fruit', '1/2 cup'),
+      FoodExample('Unsweetened fruit compote', '1/2 cup'),
+      FoodExample('Dried fruit', '~1 tbsp'),
     ],
   ),
   const FoodType(
@@ -55,17 +59,22 @@ final List<FoodType> defaultFoodTypes = [
     emoji: '🌾',
     color: Color(0xFFC98A2C),
     infoTitle: 'Grains',
-    infoText: 'A portion is about 1 slice of bread, 1/2 cup of cooked '
-        'rice, pasta, or oatmeal, or 1 cup of ready-to-eat cereal.',
+    infoText: 'A portion is about 1 slice of bread, 30 g of cereal, '
+        'crackers, or oatmeal, or 1/3 cup of granola.',
     examples: [
+      FoodExample('Breakfast cereal', '30 g'),
       FoodExample('Bread', '1 slice'),
-      FoodExample('Cooked rice', '1/2 cup'),
-      FoodExample('Cooked pasta', '1/2 cup'),
-      FoodExample('Cooked oatmeal', '1/2 cup'),
-      FoodExample('Ready-to-eat cereal', '1 cup'),
-      FoodExample('English muffin', '1/2'),
-      FoodExample('Pancake (4.5")', '1'),
-      FoodExample('Small tortilla (6")', '1'),
+      FoodExample('English muffin', '1'),
+      FoodExample('Bagel', '1/2'),
+      FoodExample('Tortilla (6")', '1'),
+      FoodExample('Oatmeal', '30 g (or 1 packet)'),
+      FoodExample('Granola or AllBran Buds', '1/3 cup'),
+      FoodExample('Granola or cereal bar', '1'),
+      FoodExample('Store-bought muffin', '1/2'),
+      FoodExample('Crackers', '30 g'),
+      FoodExample('Rice cakes', '2'),
+      FoodExample('Plain popcorn', '2-3 cups'),
+      FoodExample('Roasted legumes (or in salad)', '1/4 cup'),
     ],
   ),
   const FoodType(
@@ -74,16 +83,13 @@ final List<FoodType> defaultFoodTypes = [
     emoji: '🥛',
     color: Color(0xFF42A5F5),
     infoTitle: 'Dairy',
-    infoText: 'A portion is about 1 cup of milk or yogurt, or 1.5 oz of '
-        'natural cheese (cheese is conventionally measured by weight, '
-        'not volume).',
+    infoText: 'A portion is about 1 cup of milk or soy beverage, 1/2 cup '
+        'of yogurt, or 25 g of cheese.',
     examples: [
-      FoodExample('Milk', '1 cup'),
-      FoodExample('Yogurt', '1 cup'),
-      FoodExample('Fortified soy milk', '1 cup'),
-      FoodExample('Lactose-free milk', '1 cup'),
-      FoodExample('Natural cheese (cheddar, mozzarella, swiss)', '1.5 oz'),
-      FoodExample('Processed cheese', '2 oz'),
+      FoodExample('Milk or soy beverage', '1 cup'),
+      FoodExample('Yogurt', '1/2 cup'),
+      FoodExample('Cottage cheese', '1/4 cup'),
+      FoodExample('Cheese', '25 g (or 1-2 individually wrapped)'),
     ],
   ),
   const FoodType(
@@ -92,16 +98,17 @@ final List<FoodType> defaultFoodTypes = [
     emoji: '🍗',
     color: Color(0xFF8D6E63),
     infoTitle: 'Protein',
-    infoText: 'A portion is about 1 oz of cooked meat, poultry, or fish, '
-        '1 egg, 1 tbsp of peanut butter, or 1/4 cup of cooked beans '
-        '(meat and fish are conventionally measured by weight, not '
-        'volume).',
+    infoText: 'A portion is about 2 eggs, 3/4 cup of Greek yogurt, or '
+        '50 g of light cheese.',
     examples: [
-      FoodExample('Cooked meat, poultry, or fish', '1 oz'),
-      FoodExample('Egg', '1'),
-      FoodExample('Peanut butter (or other nut butter)', '1 tbsp'),
-      FoodExample('Cooked beans, peas, or lentils', '1/4 cup'),
-      FoodExample('Nuts or seeds', '1/2 oz (small handful)'),
+      FoodExample('Eggs', '2'),
+      FoodExample('Egg whites or cottage cheese', '1/2 cup'),
+      FoodExample('Greek yogurt', '3/4 cup'),
+      FoodExample('High-protein milk (e.g. NatrelPlus, Silk 18g)', '1 cup'),
+      FoodExample('Protein powder', '1 scoop'),
+      FoodExample('Protein bar (>20 g protein)', '1'),
+      FoodExample('Light cheese (0-20% M.F.)', '50 g (or 2-3 individually wrapped)'),
+      FoodExample('Roasted edamame', '3/4 cup'),
     ],
   ),
   const FoodType(
@@ -110,14 +117,13 @@ final List<FoodType> defaultFoodTypes = [
     emoji: '🥑',
     color: Color(0xFF9CCC65),
     infoTitle: 'Fats & Oils',
-    infoText: 'A portion is about 1 tsp of oil, butter, or margarine, or '
-        '1 tbsp of regular salad dressing.',
+    infoText: 'A portion is about 2 tsp of peanut butter, 2-3 tbsp of '
+        'hummus, or about 10 nuts or olives.',
     examples: [
-      FoodExample('Cooking oil (olive, canola, vegetable)', '1 tsp'),
-      FoodExample('Butter or soft margarine', '1 tsp'),
-      FoodExample('Regular salad dressing', '1 tbsp'),
-      FoodExample('Large olives', '8'),
-      FoodExample('Avocado', '1/2 medium (~3 portions)'),
+      FoodExample('Peanut butter', '2 tsp (10 mL)'),
+      FoodExample('Hummus or tofu spread', '2-3 tbsp (30-45 mL)'),
+      FoodExample('Nuts or olives', '~10'),
+      FoodExample('Avocado', '1/3'),
     ],
   ),
   const FoodType(
@@ -126,15 +132,14 @@ final List<FoodType> defaultFoodTypes = [
     emoji: '🍬',
     color: Color(0xFFEC407A),
     infoTitle: 'Added Sugars',
-    infoText: 'A portion is about 1 tsp of sugar, honey, or syrup — '
-        'roughly 4 grams. Sweetened drinks add up fast: a 12 oz can of '
-        'soda alone runs about 8-10 tsp.',
+    infoText: 'A portion is about 1 tbsp of honey, sugar, or syrup, '
+        '1/2 cup of fruit juice, or one alcoholic drink.',
     examples: [
-      FoodExample('Granulated sugar', '1 tsp'),
-      FoodExample('Honey', '1 tsp'),
-      FoodExample('Maple syrup', '1 tsp'),
-      FoodExample('Jam or jelly', '1 tsp'),
-      FoodExample('Regular soda (12 oz can)', '~8-10 tsp total'),
+      FoodExample('Honey, sugar, maple syrup, or jam', '1 tbsp (15 mL)'),
+      FoodExample('Fruit juice', '1/2 cup'),
+      FoodExample('A dessert (e.g. cookies, chocolate)', '1 serving'),
+      FoodExample('Ice cream', '1/4 cup'),
+      FoodExample('Alcoholic drink', '1'),
     ],
   ),
 ];

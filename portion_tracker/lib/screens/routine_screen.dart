@@ -19,7 +19,7 @@ class _RoutineScreenState extends State<RoutineScreen> {
     final provider = context.watch<RoutineProvider>();
     final total = provider.items.length;
     final checkedCount = provider.items.where((i) => provider.isChecked(i.id)).length;
-    final startTimes = _computeStartTimes(provider.items, provider.startTime);
+    final startTimes = _computeStartTimes(provider);
 
     return Scaffold(
       appBar: AppBar(
@@ -82,51 +82,113 @@ class _RoutineScreenState extends State<RoutineScreen> {
             ),
           ),
           const SizedBox(height: 8),
+          if (_editing)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Drag the handle to reorder',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade600,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ),
           Expanded(
-            child: ListView(
+            child: _editing
+                ? ReorderableListView.builder(
+              buildDefaultDragHandles: false,
+              padding: const EdgeInsets.only(top: 4, bottom: 8),
+              itemCount: provider.items.length,
+              onReorder: (oldIndex, newIndex) => provider.reorderItems(oldIndex, newIndex),
+              itemBuilder: (context, index) {
+                final item = provider.items[index];
+                return _buildTile(context, provider, item, startTimes[item.id], dragIndex: index);
+              },
+            )
+                : ListView(
               padding: const EdgeInsets.only(top: 8, bottom: 24),
               children: [
                 for (final item in provider.items)
                   _buildTile(context, provider, item, startTimes[item.id]),
-                if (_editing)
-                  ListTile(
-                    leading: const Icon(Icons.add_circle_outline),
-                    title: const Text('Add item'),
-                    onTap: () => _addItem(context, provider),
-                  ),
               ],
             ),
           ),
+          if (_editing)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => _addItem(context, provider),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add item'),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 
-  Map<String, TimeOfDay> _computeStartTimes(List<RoutineItem> items, TimeOfDay? schoolStart) {
+  /// Works backwards from the school start time so the last item finishes
+  /// exactly on time. A checked item's duration is skipped rather than
+  /// added to the running total, so once something is done, the items
+  /// still unchecked *before* it in the list get pushed to a later (more
+  /// relaxed) start time — reflecting that there's less work left, not
+  /// just following the original plan blindly.
+  Map<String, TimeOfDay> _computeStartTimes(RoutineProvider provider) {
+    final schoolStart = provider.startTime;
     if (schoolStart == null) return {};
+
     final result = <String, TimeOfDay>{};
     var cumulativeMinutes = 0;
-    for (final item in items.reversed) {
-      cumulativeMinutes += item.durationMinutes;
-      var totalMinutes = schoolStart.hour * 60 + schoolStart.minute - cumulativeMinutes;
+    for (final item in provider.items.reversed) {
+      if (!provider.isChecked(item.id)) {
+        cumulativeMinutes += item.durationMinutes;
+      }
+      var totalMinutes =
+          schoolStart.hour * 60 + schoolStart.minute - cumulativeMinutes;
       totalMinutes = ((totalMinutes % 1440) + 1440) % 1440;
-      result[item.id] = TimeOfDay(hour: totalMinutes ~/ 60, minute: totalMinutes % 60);
+      result[item.id] =
+          TimeOfDay(hour: totalMinutes ~/ 60, minute: totalMinutes % 60);
     }
     return result;
   }
 
-  Widget _buildTile(BuildContext context, RoutineProvider provider, RoutineItem item, TimeOfDay? startTime) {
+  TimeOfDay _addMinutes(TimeOfDay time, int minutes) {
+    final total = (((time.hour * 60 + time.minute + minutes) % 1440) + 1440) % 1440;
+    return TimeOfDay(hour: total ~/ 60, minute: total % 60);
+  }
+
+  Widget _buildTile(
+      BuildContext context,
+      RoutineProvider provider,
+      RoutineItem item,
+      TimeOfDay? startTime, {
+        int? dragIndex,
+      }) {
     final isChecked = provider.isChecked(item.id);
-    final subtitle = startTime != null
-        ? 'Start at ${startTime.format(context)} • ${item.durationMinutes} min'
-        : '${item.durationMinutes} min';
+    final isBedtime = item.label == 'Heure de coucher';
+    final subtitle = startTime == null
+        ? '${item.durationMinutes} min'
+        : isBedtime
+        ? '${startTime.format(context)}'
+        : 'Start at ${startTime.format(context)} • ${item.durationMinutes} min';
+
+    final leadingIcon = Icon(
+      _editing ? Icons.drag_handle : (isChecked ? Icons.check_circle : Icons.radio_button_unchecked),
+      color: isChecked ? Theme.of(context).colorScheme.primary : Colors.grey.shade400,
+    );
 
     return ListTile(
+      key: ValueKey(item.id),
       onTap: _editing ? () => _editItem(context, provider, item) : () => provider.toggle(item.id),
-      leading: Icon(
-        _editing ? Icons.edit_outlined : (isChecked ? Icons.check_circle : Icons.radio_button_unchecked),
-        color: isChecked ? Theme.of(context).colorScheme.primary : Colors.grey.shade400,
-      ),
+      leading: _editing && dragIndex != null
+          ? ReorderableDragStartListener(index: dragIndex, child: leadingIcon)
+          : leadingIcon,
       title: Text(
         item.label,
         style: TextStyle(

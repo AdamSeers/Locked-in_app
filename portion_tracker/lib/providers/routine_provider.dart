@@ -165,6 +165,20 @@ class RoutineProvider extends ChangeNotifier {
     await _persistItems();
   }
 
+  /// Moves the item at [oldIndex] to [newIndex], following the same
+  /// index convention as ReorderableListView.onReorder.
+  Future<void> reorderItems(int oldIndex, int newIndex) async {
+    final updated = List<RoutineItem>.of(_items);
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    final item = updated.removeAt(oldIndex);
+    updated.insert(newIndex, item);
+    _items = updated;
+    notifyListeners();
+    await _persistItems();
+  }
+
   Future<void> removeItem(String id) async {
     _items = _items.where((e) => e.id != id).toList();
     _checked.remove(id);
